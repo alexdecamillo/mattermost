@@ -91,8 +91,13 @@ export default class PostMessageView extends React.PureComponent<Props, State> {
         );
     }
 
-    handleFormattedTextClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
-        Utils.handleFormattedTextClick(e, this.props.currentRelativeTeamUrl);
+    handleFormattedTextClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (this.props.post.props.channel_mentions) {
+            const mentions = this.props.post.props.channel_mentions;
+            return Utils.handleFormattedTextClick(e, `/${mentions[Object.keys(mentions)[0]].team_name}`);
+        }
+        return Utils.handleFormattedTextClick(e, this.props.currentRelativeTeamUrl);
+    };
 
     render() {
         const {
