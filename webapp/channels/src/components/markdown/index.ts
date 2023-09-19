@@ -10,7 +10,7 @@ import {getAutolinkedUrlSchemes, getConfig, getManagedResourcePaths} from 'matte
 import {getPost} from 'mattermost-redux/selectors/entities/posts';
 import {getBool} from 'mattermost-redux/selectors/entities/preferences';
 import {getAllUserMentionKeys} from 'mattermost-redux/selectors/entities/search';
-import {getCurrentTeam} from 'mattermost-redux/selectors/entities/teams';
+import {getCurrentTeam, getTeamByName} from 'mattermost-redux/selectors/entities/teams';
 
 import {getEmojiMap} from 'selectors/emojis';
 
@@ -49,8 +49,15 @@ function makeMapStateToProps() {
         const config = getConfig(state);
 
         let channelId;
+        let mentionedTeam;
         if (ownProps.postId) {
-            channelId = getPost(state, ownProps.postId)?.channel_id;
+            const post = getPost(state, ownProps.postId);
+            channelId = post?.channel_id;
+            if (post?.props.channel_mentions) {
+                const teamKey = Object.keys(post.props.channel_mentions)[0] as string;
+                const channelMention = post.props.channel_mentions[teamKey];
+                mentionedTeam = getTeamByName(state, channelMention.team_name);
+            }
         }
 
         return {
@@ -65,6 +72,7 @@ function makeMapStateToProps() {
             minimumHashtagLength: parseInt(config.MinimumHashtagLength || '', 10),
             emojiMap: getEmojiMap(state),
             channelId,
+            mentionedTeam,
         };
     };
 }

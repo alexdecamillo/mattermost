@@ -104,6 +104,11 @@ type Props = {
     channelId?: string;
 
     /**
+     * The team referred to in a channel mention
+     */
+    mentionedTeam?: Team;
+
+    /**
      * Post id prop passed down to markdown image
      */
     postType?: PostType;
@@ -150,7 +155,7 @@ export default class Markdown extends React.PureComponent<Props> {
             atMentions: true,
             channelNamesMap: this.props.channelNamesMap,
             proxyImages: this.props.hasImageProxy && this.props.proxyImages,
-            team: this.props.team,
+            team: this.props.mentionedTeam ?? this.props.team,
             minimumHashtagLength: this.props.minimumHashtagLength,
             managedResourcePaths: this.props.managedResourcePaths,
             editedAt,
